@@ -40,9 +40,6 @@ ecom_app/
 │   └── node_express_api/   # REST API
 ```
 
-## 📸 Screenshots
-
-*(You can add screenshots of your UI here)*
 
 ## 🔧 How to Run
 
