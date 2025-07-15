@@ -1,10 +1,6 @@
 ## Flutter_ecommerce_app
 
 
-
-
-E-Commerce app is a design implementation of [E-commerce App](https://dribbble.com/shots/15550702-E-commerce-Mobile-App) designed by [Billah](https://dribbble.com/designermasum)
-
 ![](https://github.com/SinaSys/flutter_ecommerce_app/blob/master/screenshots/screenshot.png?raw=true)
 
 
