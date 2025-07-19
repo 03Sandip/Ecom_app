@@ -1,4 +1,4 @@
-//const MAIN_URL = 'http://192.168.1.4:3000';
+//const MAIN_URL = 'http://34.93.143.127:3000';
 const MAIN_URL = 'http://10.0.2.2:3000';//make changes aaccording to your local server----
 
 const FAVORITE_PRODUCT_BOX = 'FAVORITE_PRODUCT_BOX';
