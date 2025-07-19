@@ -24,8 +24,8 @@ Future<void> main() async {
   await GetStorage.init();
   var cart = FlutterCart();
   // add one signal app id
-  
   OneSignal.initialize("537bf1ba-dd63-46a6-bb76-a307b4471875");
+  // set notification opened handler
   OneSignal.Notifications.requestPermission(true);
   await cart.initializeCart(isPersistenceSupportEnabled: true);
 
