@@ -24,7 +24,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.1'
+          flutter-version: '3.22.1' # 🔁 Update this if needed
 
       - name: Install dependencies
         working-directory: client_side/client_app
