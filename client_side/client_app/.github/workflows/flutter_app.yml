@@ -1,0 +1,47 @@
+name: Build Flutter App
+
+on:
+  push:
+    paths:
+      - 'client_side/client_app/**'
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'client_side/client_app/**'
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build on Flutter Stable
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+
+      - name: Navigate to app directory
+        working-directory: client_side/client_app
+        run: echo "In client app directory"
+
+      - name: Install dependencies
+        working-directory: client_side/client_app
+        run: flutter pub get
+
+      - name: Analyze code
+        working-directory: client_side/client_app
+        run: flutter analyze
+
+      - name: Run tests
+        working-directory: client_side/client_app
+        run: flutter test
+
+      - name: Build APK
+        working-directory: client_side/client_app
+        run: flutter build apk --debug

@@ -6,11 +6,9 @@ import '../../../../widget/product_grid_view.dart';
 import 'components/category_selector.dart';
 import 'components/poster_section.dart';
 
-
-
 class ProductListScreen extends StatelessWidget {
   const ProductListScreen({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,16 +22,17 @@ class ProductListScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Hello Sandip",
+                  "Hello Sandip👋👋",
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
+                const SizedBox(height: 10), // Added gap
                 Text(
-                  "Lets gets somethings",
+                  "Lets gets somethings🛍️",
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const PosterSection(),
                 Text(
-                  "Top categories",
+                  "Top categories📇",
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 const SizedBox(height: 5),

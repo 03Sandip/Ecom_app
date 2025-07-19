@@ -49,13 +49,16 @@ class ProductGridTile extends StatelessWidget {
             Consumer<FavoriteProvider>(
               builder: (context, favoriteProvider, child) {
                 return IconButton(
-                  icon:  const Icon(
+                  icon:  Icon(
                     Icons.favorite,
                     //TODO: should complete make color dynamic
-                    color: Color(0xFFA6A3A0),
+                    color: favoriteProvider.checkIsItemFavorite(product.sId ?? '')
+                        ? Colors.red
+                        : const Color(0xFFA6A3A0),
                   ),
                   onPressed: () {
                     //TODO: should complete make call updateToFavoriteList
+                    context.favoriteProvider.updateToFavoriteList(product.sId ?? '');
                   },
                 );
               },

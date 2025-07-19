@@ -1,3 +1,5 @@
+import 'package:admin/utility/extensions.dart';
+
 import 'components/order_header.dart';
 import 'components/order_list_section.dart';
 import 'package:flutter/material.dart';
@@ -42,9 +44,9 @@ class OrderScreen extends StatelessWidget {
                               displayItem: (val) => val,
                               onChanged: (newValue) {
                                 if (newValue?.toLowerCase() == 'all order') {
-                                  //TODO: should complete call filterOrders
+                                  context.dataProvider.filterOrders('');//call filter with empty string to show all orders
                                 } else {
-                                  //TODO: should complete call filterOrders
+                                  context.dataProvider.filterOrders(newValue?.toLowerCase() ?? '');//call filter with the selected status
                                 }
                               },
                               validator: (value) {
@@ -58,7 +60,7 @@ class OrderScreen extends StatelessWidget {
                           Gap(40),
                           IconButton(
                               onPressed: () {
-                                //TODO: should complete call getAllOrders
+                              context.dataProvider.getAllOrders(showSnack: true); // Fetch all orders refresh
                               },
                               icon: Icon(Icons.refresh)),
                         ],

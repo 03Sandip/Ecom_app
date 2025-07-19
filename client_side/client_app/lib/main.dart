@@ -23,8 +23,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   var cart = FlutterCart();
-  //TODO: should complete add one signal app id
-  OneSignal.initialize("YOUR_ONE_SIGNAL_APP_ID");
+  // add one signal app id
+  
+  OneSignal.initialize("537bf1ba-dd63-46a6-bb76-a307b4471875");
   OneSignal.Notifications.requestPermission(true);
   await cart.initializeCart(isPersistenceSupportEnabled: true);
 

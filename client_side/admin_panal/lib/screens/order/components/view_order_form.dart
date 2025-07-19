@@ -247,7 +247,7 @@ class OrderSubmitForm extends StatelessWidget {
           onPressed: () {
             if (Provider.of<OrderProvider>(context, listen: false).orderFormKey.currentState!.validate()) {
               Provider.of<OrderProvider>(context, listen: false).orderFormKey.currentState!.save();
-              //TODO: should complete call updateOrder
+               context.orderProvider.updateOrder(); // call updaet order
               Navigator.of(context).pop();
             }
           },

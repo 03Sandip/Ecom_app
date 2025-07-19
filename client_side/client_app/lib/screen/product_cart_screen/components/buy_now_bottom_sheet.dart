@@ -1,5 +1,5 @@
 import 'dart:ui';
-import '../provider/cart_provider.dart';
+import 'package:e_commerce_flutter/screen/product_cart_screen/provider/cart_provider.dart';
 import '../../../utility/extensions.dart';
 import '../../../widget/compleate_order_button.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import '../../../widget/applay_coupon_btn.dart';
 import '../../../widget/custom_dropdown.dart';
 import '../../../widget/custom_text_field.dart';
+// ignore: duplicate_importimport 'package:e_commerce_flutter/screen/product_cart_screen/provider/cart_provider.dart';
+
 
 void showCustomBottomSheet(BuildContext context) {
   context.cartProvider.clearCouponDiscount();
@@ -142,7 +144,7 @@ void showCustomBottomSheet(BuildContext context) {
                       ),
                     ),
                     ApplyCouponButton(onPressed: () {
-                      //TODO: should complete call checkCoupon
+                     context.cartProvider.checkCoupon(); //checkcoupon
                     })
                   ],
                 ),
@@ -160,12 +162,12 @@ void showCustomBottomSheet(BuildContext context) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Total Amount             : \$${100}', //TODO: should complete to CartSubTotal
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
+                           Text('Total Amount             : \$${context.cartProvider.getCartSubTotal()}', //CartSubTotal
+                              style:  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
                           Text('Total Offer Applied  : \$${cartProvider.couponCodeDiscount}',
                               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
-                          const Text('Grand Total            : \$${100}', //TODO: should complete to GrandTotal
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
+                          Text('Grand Total            : \$${context.cartProvider.getCartSubTotal() - cartProvider.couponCodeDiscount}', //GrandTotal
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue)),
                         ],
                       );
                     },
@@ -176,7 +178,7 @@ void showCustomBottomSheet(BuildContext context) {
                 Consumer<CartProvider>(
                   builder: (context, cartProvider, child) {
                     return CompleteOrderButton(
-                        labelText: 'Complete Order  \$${100} ', //TODO: should complete to GrandTotal
+                        labelText: 'Complete Order  \$${cartProvider.getGrandTotal()} ', //GrandTotal
                         onPressed: () {
                           if (!cartProvider.isExpanded) {
                             cartProvider.isExpanded = true;
@@ -186,7 +188,7 @@ void showCustomBottomSheet(BuildContext context) {
                           // Check if the form is valid
                           if (context.cartProvider.buyNowFormKey.currentState!.validate()) {
                             context.cartProvider.buyNowFormKey.currentState!.save();
-                            //TODO: should complete call submitOrder
+                            context.cartProvider.submitOrder(context);//submitOrder
                             return;
                           }
                         });

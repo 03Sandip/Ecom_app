@@ -1,3 +1,5 @@
+import 'package:admin/utility/extensions.dart';
+
 import 'components/notification_header.dart';
 import 'components/notification_list_section.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +57,8 @@ class NotificationScreen extends StatelessWidget {
                           Gap(20),
                           IconButton(
                               onPressed: () {
-                                //TODO: should complete call getAllNotifications
+                                //call getAllNotifications
+                                context.dataProvider.getAllNotifications(showSnack: true);
                               },
                               icon: Icon(Icons.refresh)),
                         ],

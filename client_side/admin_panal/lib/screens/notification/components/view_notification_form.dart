@@ -1,3 +1,5 @@
+import 'package:admin/utility/extensions.dart';
+
 import '../../../models/my_notification.dart';
 import '../provider/notification_provider.dart';
 import '../../../utility/constants.dart';
@@ -17,7 +19,8 @@ class ViewNotificationForm extends StatelessWidget {
     var size = MediaQuery
         .of(context)
         .size;
-    //TODO: should complete getNotificationInfo
+    // complete getNotificationInfo
+    context.notificationProvider.getNotificationInfo(notification);
     return SingleChildScrollView(
       child: Container(
         padding: EdgeInsets.all(defaultPadding),

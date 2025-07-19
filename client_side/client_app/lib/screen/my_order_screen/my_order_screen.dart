@@ -15,6 +15,9 @@ class MyOrderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //TODO: should complete call getAllOrderByUser
+   context.dataProvider.getAllOrderByUser(
+      context.userProvider.getLoginUsr(),
+    );
     return Scaffold(
       appBar: AppBar(
         title: const Text(

@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'package:e_commerce_flutter/utility/utility_extention.dart';
+
 import '../../../models/coupon.dart';
 import '../../login_screen/provider/user_provider.dart';
 import '../../../services/http_services.dart';
@@ -37,28 +40,179 @@ class CartProvider extends ChangeNotifier {
 
   CartProvider(this._userProvider);
 
-  //TODO: should complete updateCart
+  // updateCart----------------------------------------------------------------------------------------------------------------
+  void updateCart(CartModel cartItem, int quantity) {
+    quantity = cartItem.quantity + quantity;
+    flutterCart.updateQuantity(cartItem.productId, cartItem.variants, quantity);
+    notifyListeners();
+  }
 
-  //TODO: should complete getCartSubTotal
+  //getCartItems
+  getCartItems() {
+    myCartItems = flutterCart.cartItemsList;
+    notifyListeners();
+  }
 
-  //TODO: should complete getGrandTotal
+  //getCartSubTotal
+  double getCartSubTotal() {
+    return flutterCart.subtotal;
+  }
 
-  //TODO: should complete getCartItems
+  //getGrandTotal
+  double getGrandTotal() {
+    return getCartSubTotal() - couponCodeDiscount;
+  }
 
-  //TODO: should complete clearCartItems
+//clearCartItems----------------------------------------------------------------------------------------------------------
+clearCartItems() {
+    flutterCart.clearCart();
+    notifyListeners();
+  }
+
+  //checkCoupon---------------------------------------------------------------------------------------------------------------
+  checkCoupon() async {
+    try {
+      if (couponController.text.isEmpty) {
+        SnackBarHelper.showErrorSnackBar('Please enter a coupon code');
+        return;
+      }
+      List<String> productIds =
+          myCartItems.map((cartItem) => cartItem.productId).toList();
+      Map<String, dynamic> couponData = {
+        "couponCode": couponController.text,
+        "purchaseAmount": getCartSubTotal(),
+        "productIds": productIds,
+      };
+      final response = await service.addItem(
+          endpointUrl: 'couponCodes/check-coupon', itemData: couponData);
+      if (response.isOk) {
+        final ApiResponse<Coupon> apiResponse = ApiResponse<Coupon>.fromJson(
+            response.body,
+            (json) => Coupon.fromJson(json as Map<String, dynamic>));
+        if (apiResponse.success == true) {
+          Coupon? coupon = apiResponse.data;
+          if (coupon != null) {
+            couponApplied = coupon;
+            couponCodeDiscount = getCouponDiscountAmount(coupon);
+          }
+          SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+          log('Coupon is valid');
+        } else {
+          SnackBarHelper.showErrorSnackBar(
+              'Invalid or expired coupon: ${apiResponse.message}');
+        }
+      } else {
+        SnackBarHelper.showErrorSnackBar(
+            'Error ${response.body?['message'] ?? response.statusText}');
+      }
+      notifyListeners();
+    } catch (e) {
+      print(e);
+      SnackBarHelper.showErrorSnackBar('An error occurred: $e');
+      rethrow;
+    }
+  }
+
+  //getCouponDiscountAmount----------------------------------------------------------------------------------------------
+  double getCouponDiscountAmount(Coupon coupon) {
+  double discountAmount = 0;
+  String discountType = coupon.discountType ?? 'fixed';
+
+  if (discountType == 'fixed') {
+    discountAmount = coupon.discountAmount ?? 0;
+    return discountAmount;
+  } else {
+    double discountPercentage = coupon.discountAmount ?? 0;
+    double amountAfterDiscountPercentage = getCartSubTotal() * (discountPercentage / 100);
+    return amountAfterDiscountPercentage;
+  }
+}
 
 
-  //TODO: should complete checkCoupon
+//addOrder
+addOrder(BuildContext context) async {
+  try {
+    Map<String, dynamic> order = {
+      "userID": _userProvider.getLoginUsr()?.sId ?? '',
+      "orderStatus": "pending",
+      "items": cartItemToOrderItem(myCartItems),
+      "totalPrice": getCartSubTotal(),
+      "shippingAddress": {
+        "phone": phoneController.text,
+        "street": streetController.text,
+        "city": cityController.text,
+        "state": stateController.text,
+        "postalCode": postalCodeController.text,
+        "country": countryController.text,
+      },
+      "paymentMethod": selectedPaymentOption,
+      "couponCode": couponApplied?.sId,
+      "orderTotal": {
+        "subtotal": getCartSubTotal(),
+        "discount": couponCodeDiscount,
+        "total": getGrandTotal(),
+      },
+    };
 
-  //TODO: should complete getCouponDiscountAmount
+    final response = await service.addItem(
+      endpointUrl: 'orders',
+      itemData: order
+    );
+
+    if (response.isOk) {
+      ApiResponse apiResponse = ApiResponse.fromJson(response.body, null);
+      if (apiResponse.success == true) {
+        SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+        log('Order placed successfully');
+        clearCouponDiscount();
+        clearCartItems();
+        Navigator.pop(context);
+      } else {
+        SnackBarHelper.showErrorSnackBar('Failed to place order: ${apiResponse.message}');
+      }
+    } else {
+      SnackBarHelper.showErrorSnackBar(
+          'Error occurred: ${response.body?['message'] ?? response.statusText}');
+    }
+  } catch (e) {
+    print(e);
+    SnackBarHelper.showErrorSnackBar('An error occurred: $e');
+    rethrow;
+  }
+}
+
+//cartItemToOrderItem
+  List<Map<String, dynamic>> cartItemToOrderItem(List<CartModel> cartItems) {
+    return cartItems.map((cartItem) {
+      return {
+        "productID": cartItem.productId,
+        "productName": cartItem.productName,
+        "quantity": cartItem.quantity,
+        "price": cartItem.variants.safeElementAt(0)?.price ?? 0,
+        "variants": cartItem.variants.safeElementAt(0)?.color ?? "",
+        
+      };
+    }).toList();
+  }
 
 
-  //TODO: should complete submitOrder
+  //submitOrder
+  submitOrder(BuildContext context) async {
+    if(selectedPaymentOption == 'cod') {
+      addOrder(context);
+      // Handle Cash on Delivery
+    } else {
+      await razorpayPayment(operation: () {
+        addOrder(context);
+      });
+      // Handle other payment methods
+    }
+  }
 
-  //TODO: should complete addOrder
 
-  //TODO: should complete cartItemToOrderItem
+  
 
+  
 
   clearCouponDiscount() {
     couponApplied = null;
@@ -88,11 +242,12 @@ class CartProvider extends ChangeNotifier {
           "postal_code": postalCodeController.text,
           "country": "US"
         },
-        "amount":  100, //TODO: should complete amount grand total
+        "amount": getGrandTotal() * 100, //amount grand total
         "currency": "usd",
         "description": "Your transaction description here"
       };
-      Response response = await service.addItem(endpointUrl: 'payment/stripe', itemData: paymentData);
+      Response response = await service.addItem(
+          endpointUrl: 'payment/stripe', itemData: paymentData);
       final data = await response.body;
       final paymentIntent = data['paymentIntent'];
       final ephemeralKey = data['ephemeralKey'];
@@ -160,27 +315,34 @@ class CartProvider extends ChangeNotifier {
 
   Future<void> razorpayPayment({required void Function() operation}) async {
     try {
-      Response response = await service.addItem(endpointUrl: 'payment/razorpay', itemData: {});
+      Response response =
+          await service.addItem(endpointUrl: 'payment/razorpay', itemData: {});
       final data = await response.body;
       String? razorpayKey = data['key'];
       if (razorpayKey != null && razorpayKey != '') {
         var options = {
           'key': razorpayKey,
-          'amount': 100, //TODO: should complete amount grand total
+          'amount': getGrandTotal() * 100, // amount grand total
           'name': "user",
           "currency": 'INR',
           'description': 'Your transaction description',
           'send_sms_hash': true,
-          "prefill": {"email": _userProvider.getLoginUsr()?.name, "contact": ''},
+          "prefill": {
+            "email": _userProvider.getLoginUsr()?.name,
+            "contact": ''
+          },
           "theme": {'color': '#FFE64A'},
-          "image": 'https://store.rapidflutter.com/digitalAssetUpload/rapidlogo.png',
+          "image":
+              'https://store.rapidflutter.com/digitalAssetUpload/rapidlogo.png',
         };
         razorpay.open(options);
-        razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, (PaymentSuccessResponse response) {
+        razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
+            (PaymentSuccessResponse response) {
           operation();
           return;
         });
-        razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, (PaymentFailureResponse response) {
+        razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
+            (PaymentFailureResponse response) {
           SnackBarHelper.showErrorSnackBar('Error ${response.message}');
           return;
         });

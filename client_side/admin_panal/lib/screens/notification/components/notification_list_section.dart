@@ -1,3 +1,5 @@
+import 'package:admin/utility/extensions.dart';
+
 import '../../../core/data/data_provider.dart';
 import '../../../models/my_notification.dart';
 import 'view_notification_form.dart';
@@ -56,7 +58,8 @@ class NotificationListSection extends StatelessWidget {
                     (index) => notificationDataRow(dataProvider.notifications[index], index + 1, edit: () {
                       viewNotificationStatics(context, dataProvider.notifications[index]);
                     }, delete: () {
-                      //TODO: should complete call deleteNotification
+                      // call deleteNotification
+                      context.notificationProvider.deleteNotification(dataProvider.notifications[index]);
                     }),
                   ),
                 );

@@ -239,7 +239,34 @@ class DataProvider extends ChangeNotifier {
 
 // end--------------------------------------------------------------------------
 
-  //TODO: should complete getAllOrderByUser
+  // TODO: should complete getAllOrderByUser
+Future<void> getAllOrderByUser(User? user, {bool showSnack = false}) async {
+  try {
+    final userId = user?.sId;
+    Response response = await service.getItems(endpointUrl: 'orders/orderByUserId/$userId');
+
+    if (response.isOk) {
+      ApiResponse<List<Order>> apiResponse = ApiResponse<List<Order>>.fromJson(
+        response.body,
+        (json) => (json as List).map((item) => Order.fromJson(item)).toList(),
+      );
+
+      _allOrders = apiResponse.data ?? [];
+      _filteredOrders = _allOrders;
+      notifyListeners();
+
+      if (showSnack) {
+        SnackBarHelper.showSuccessSnackBar(apiResponse.message);
+      }
+    }
+  } catch (e) {
+    if (showSnack) {
+      SnackBarHelper.showErrorSnackBar(e.toString());
+    }
+  }
+}
+
+  
 
   double calculateDiscountPercentage(num originalPrice, num? discountedPrice) {
     if (originalPrice <= 0) {
