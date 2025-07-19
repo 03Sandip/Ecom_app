@@ -306,10 +306,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_login
-      sha256: "73ab879fa40cc04778cf4b6342b43586818c7e7a90df23c59a4a1d4a1dd36091"
+      sha256: "97f27a52bd68038090bd79f22600ad9ae86158f1d55c47e3d0cef66b299579f3"
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.0"
+    version: "4.2.1"
   flutter_rating_bar:
     dependency: "direct main"
     description:
@@ -660,10 +660,10 @@ packages:
     dependency: transitive
     description:
       name: phone_numbers_parser
-      sha256: "8aaa49708c9314d450d80767753c6512402e848138e5a91bf59ed3e0d3ac5d9b"
+      sha256: "62451b689d842791ed1fd5dc9eacf36ffa8bad23a78ad6cde732dc2fb222fae2"
       url: "https://pub.dev"
     source: hosted
-    version: "9.0.3"
+    version: "8.3.0"
   platform:
     dependency: transitive
     description:
@@ -812,10 +812,10 @@ packages:
     dependency: transitive
     description:
       name: sign_in_button
-      sha256: "7bcd5e3ca5f80578da6a92b8749badf4003cf4dc578b5cb737b9082871354ff8"
+      sha256: "977b9b0415d2f3909e642275dfabba7919ba8e111324641b76cae6d1acbd183e"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.1"
+    version: "3.2.0"
   sky_engine:
     dependency: transitive
     description: flutter
