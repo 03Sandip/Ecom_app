@@ -26,10 +26,6 @@ jobs:
         with:
           flutter-version: 'stable'
 
-      - name: Navigate to app directory
-        working-directory: client_side/client_app
-        run: echo "In client app directory"
-
       - name: Install dependencies
         working-directory: client_side/client_app
         run: flutter pub get
@@ -42,6 +38,12 @@ jobs:
         working-directory: client_side/client_app
         run: flutter test
 
-      - name: Build APK
+      - name: Build APK (Release)
         working-directory: client_side/client_app
-        run: flutter build apk --debug
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: ecoms-apk
+          path: client_side/client_app/build/app/outputs/flutter-apk/app-release.apk
